@@ -92,7 +92,6 @@ if __name__ == '__main__':
 
     os.system('pdflatex -interaction=batchmode tmp.latex')
     try:
-        os.remove('tmp.latex')
         os.remove('tmp.aux')
         os.remove('tmp.log')
         os.remove('tmp.out')
