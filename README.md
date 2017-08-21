@@ -5,5 +5,10 @@ This is a markdown to pdf converter for people who likes latex, but prefers to w
 ## Usage
 
 ```
-./mdpdf.py [markdown document] [header file]
+$ python mdpdf.py [markdown document] [header file]
 ```
+
+## Dependencies
+
+1. Python
+2. pdflatex
