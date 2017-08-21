@@ -1,0 +1,86 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % For fonts
+\usepackage{url} % Links
+\usepackage{lipsum} % Lorem Ipsum
+
+% MATH:
+
+% Diagonal strikethough
+% \cancel{}, \bcancel{}, \xcancel{}, \cancelto{<what it becomes>}{<what it is>}
+\usepackage{amsmath}
+\usepackage[makeroom]{cancel}
+
+% Double underline (\underline, \doubleunderline)
+\def\doubleunderline#1{\underline{\underline{#1}}}
+
+% Degrees \degrees{90}
+\newcommand\degrees[1]{\ensuremath{#1^\circ}}
+
+% Notes:
+% \begin{align*} \end{align*} use &<aligned-character>
+
+% DOCUMENT:
+
+% Fonts
+%\usepackage{mathptmx} % rm Times New Roman Derivation
+%\usepackage{libertine} % rm Libertine
+%\usepackage{mathpazo} % rm Palatino derivation
+%\usepackage{helvet} % Helvetica
+%\usepackage{kpfonts} % rm kpfonts
+%\usepackage{inconsolata} % Inconsolata tt
+\renewcommand{\familydefault}{\rmdefault} % sf rm tt
+
+% Headings and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\lhead{}
+\chead{}
+\rhead{\leftmark} % Get current section
+\lfoot{}
+\cfoot{}
+\rfoot{\thepage} % Get current page
+
+% Enable triplesubsection
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+\titleclass{\subsubsubsection}{straight}[\subsection]
+
+\newcounter{subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection.\arabic{subsubsubsection}}
+\renewcommand\theparagraph{\thesubsubsubsection.\arabic{paragraph}} % optional; useful if paragraphs are to be numbered
+
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+% Width of header and footer line
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Margins
+\usepackage[a4paper,margin=3cm]{geometry}
+
+% No indented paragraphs
+\usepackage{parskip}
+
+% Whitespace between paragraphs
+\setlength{\parskip}{2ex plus 0.5ex minus 0.2ex}
+
+% Line height
+\renewcommand{\baselinestretch}{1}
+
+\bibliographystyle{plain}
+
+% Title
+\title{\textbf{INF-1100 Assignment 2 Report}}
+\author{Simon Solnes}
+\date{}
+
+% Notes:
+% Sectionn referencing: \section{Introduction}\label{sec:intro}, \ref{sec:intro}
+
+% ========================================
