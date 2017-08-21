@@ -1,7 +1,6 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 import sys
 import os.path
-
 
 def conv_text(text):
     out = []
@@ -10,7 +9,7 @@ def conv_text(text):
         prv = text[idx - 1] if idx > 0 else ''
         nxt = text[idx + 1] if idx < len(text) - 1 else ''
 
-        if ch is '*' and nxt is not '*':
+        if ch is '*' and prv is not '*' and nxt is not '*':
             for chck in range(idx + 1, len(text)):
                 chck_prv = text[chck - 1] if chck > 0 else ''
                 chck_nxt = text[chck + 1] if chck < len(text) - 1 else ''
@@ -52,7 +51,6 @@ def conv_title(text):
 
 def conv_document(path):
     tex_lines = []
-    cntr = 0
     with open(path, 'r') as md_doc:
         for line in md_doc:
             text = line.rstrip()
@@ -64,15 +62,10 @@ def conv_document(path):
             else:
                 block = conv_text(text)
 
-            # BlockQuote
-
-            # ImageBlock
-
-            # ListBlock
-            print(str(cntr) + 'md: ' + text)
-            print(str(cntr) + 'tex: ' + block)
-            cntr += 1
-
+            # future:
+                # BlockQuote
+                # ImageBlock
+                # ListBlock
             tex_lines.append(block)
     return tex_lines
 
@@ -86,9 +79,6 @@ if __name__ == '__main__':
     header_path = sys.argv[2]
 
     # User errors
-    if not md_path[-3:] == '.md':
-        print('input md needs to end with \'md\'')
-        exit()
     if not os.path.isfile(md_path):
         print('markdown document doesn\'t exist')
         exit()
@@ -96,22 +86,18 @@ if __name__ == '__main__':
         print('header document doesn\'t exist')
         exit()
 
-    tex_lines = conv_document(md_path)
-
-    # tex -> pdf
     with open('tmp.latex', 'w') as tex_doc, open(header_path, 'r') as header:
         for line in header:
             tex_doc.write(line) 
         tex_doc.write('\\begin{document}\n')
-        for line in tex_lines:
+        for line in conv_document(md_path):
             tex_doc.write(line)
             tex_doc.write('\n')
         tex_doc.write('\\end{document}\n')
-    
-    # os.system('pdflatex -interaction=batchmode tmp.latex')
-    os.system('pdflatex tmp.latex')
 
+    os.system('pdflatex -interaction=batchmode tmp.latex')
     try:
+        os.remove('tmp.latex')
         os.remove('tmp.aux')
         os.remove('tmp.log')
         os.remove('tmp.out')
