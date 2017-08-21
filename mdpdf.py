@@ -50,22 +50,17 @@ def conv_title(text):
     return pre + 'section{' + conv_text(text[level + 1:]) + '}'
 
 def conv_document(path):
+    # TODO: BlockQuote, ImageBlock, ListBlock
     tex_lines = []
     with open(path, 'r') as md_doc:
         for line in md_doc:
             text = line.rstrip()
             if len(text) < 1: continue
 
-            # TitleBlock
             if line[0] is '#':
                 block = conv_title(text)
             else:
                 block = conv_text(text)
-
-            # future:
-                # BlockQuote
-                # ImageBlock
-                # ListBlock
             tex_lines.append(block)
     return tex_lines
 
