@@ -54,7 +54,7 @@ def conv_document(path):
     tex_lines = []
     with open(path, 'r') as md_doc:
         for line in md_doc:
-            text = line.rstrip()
+            text = line.rstrip().rstrip('<!--').rstrip('-->')
             if len(text) < 1: continue
 
             if line[0] is '#':
@@ -66,12 +66,13 @@ def conv_document(path):
 
 if __name__ == '__main__':
 
-    if len(sys.argv) != 3:
-        print('usage:\n./mdpdf.py [input md] [header file]')
+    if len(sys.argv) != 4 or sys.argv[1] in ['-h', '-H', 'help']:
+        print('usage:\n./mdpdf.py [input md] [header file] [outputname]')
         exit()
 
     md_path = sys.argv[1]
     header_path = sys.argv[2]
+    output_name = sys.argv[3]
 
     # User errors
     if not os.path.isfile(md_path):
@@ -81,19 +82,17 @@ if __name__ == '__main__':
         print('header document doesn\'t exist')
         exit()
 
-    with open('tmp.latex', 'w') as tex_doc, open(header_path, 'r') as header:
+    with open(output_name + '.latex', 'w') as tex_doc, open(header_path, 'r') as header:
         for line in header:
             tex_doc.write(line) 
         tex_doc.write('\\begin{document}\n')
         for line in conv_document(md_path):
             tex_doc.write(line)
-            tex_doc.write('\n')
+            tex_doc.write('\n\n')
         tex_doc.write('\\end{document}\n')
 
-    os.system('pdflatex -interaction=batchmode tmp.latex')
+    os.system('pdflatex -interaction=batchmode ' + output_name + '.latex')
     try:
-        os.remove('tmp.aux')
-        os.remove('tmp.log')
-        os.remove('tmp.out')
+        os.system('rm -f ' + output_name + '.aux ' + output_name + '.log ' + output_name + '.toc ' + output_name + '.out ')
     except:
         pass
