@@ -1,0 +1,8 @@
+\documentclass{article}
+\usepackage[backend=bibtex8]{biblatex}
+\addbibresource{ref.bib}
+\begin{document}
+	\cite{dirac}
+	\cite{einstein}
+	\printbibliography
+\end{document}

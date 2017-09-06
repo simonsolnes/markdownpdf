@@ -1,5 +1,6 @@
-# This is a *title* with em
+# This is a *title* with ema
 this *is italic* text, this is *italic, but with **bold** inside* text
+hfdkls;he;
 
 ## This is a subtitle
 this is more `coded` text
@@ -10,10 +11,10 @@ this is more text
 hjhj
 
 ### This is a really small title
-this is more text with $\sum{3n}$ inline math
+this is more text with `$\sum{3n}$` inline math
 
-$\frac{3}{5}$
 
+``latex
 \subsection{Latex inside markdown}
 \begin{center}
 	When $w^n=z$ is the $n$-th root of $z$\\
@@ -21,3 +22,4 @@ $\frac{3}{5}$
 	[0.5cm]
 	$w_k =r^{\frac{1}{n}}e^{i\cfrac{\theta +2k\pi}{n}}$
 \end{center}
+``

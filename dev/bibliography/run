@@ -1,0 +1,16 @@
+#!/bin/bash
+
+latex $1.latex
+bibtex $1.aux
+latex $1.latex
+pdflatex $1.latex
+
+rm -f $1.aux
+rm -f $1.bbl
+rm -f $1.bcf
+rm -f $1.blg
+rm -f $1.dvi
+rm -f $1.log
+rm -f $1.run.xml
+rm -f $1.out
+rm -f $1-blx.bib
