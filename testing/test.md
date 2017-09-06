@@ -1,6 +1,5 @@
 # This is a *title* with ema
-this *is italic* text, this is *italic, but with **bold** inside* text
-hfdkls;he;
+this *is italic* text, this is *italic, but with **bold** inside* tex
 
 ## This is a subtitle
 this is more `coded` text
@@ -8,7 +7,11 @@ this is more `coded` text
 ## Can this be a subtitle
 this is more text
 
-hjhj
+* This
+* is
+* A list
+
+just after list
 
 ### This is a really small title
 this is more text with `$\sum{3n}$` inline math
@@ -23,3 +26,4 @@ this is more text with `$\sum{3n}$` inline math
 	$w_k =r^{\frac{1}{n}}e^{i\cfrac{\theta +2k\pi}{n}}$
 \end{center}
 ``
+this is text after latex
