@@ -1,1 +1,14 @@
 .DS_Store
+testing/*.aux 
+testing/*.log
+testing/*.toc
+testing/*.out
+testing/*.bbl
+testing/*.bcf
+testing/*.blg
+testing/*.dvi
+testing/*.bib
+testing/*.run.xml
+testing/*-blx.bib
+testing/*.bib
+testing/*.latex
