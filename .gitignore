@@ -12,3 +12,4 @@ testing/*.run.xml
 testing/*-blx.bib
 testing/*.bib
 testing/*.latex
+testing/*.pdf
