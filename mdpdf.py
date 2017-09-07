@@ -12,7 +12,9 @@ To do:
     - code
     - tables
         - text aligning
-- title formatting
+    - comments
+- add code after begin document
+    - title formatting
 
 - future
     - reference style formatting links and footnotes
@@ -72,7 +74,6 @@ def conv_span(text):
 
     return retval
     
-
 def conv_list(block):
 	retval, idx = [], 0
 	def conv_list_recurse(block, retval, idx):
@@ -203,7 +204,7 @@ def parse_args(args):
         print('Please path to latex header as the environment variable "LATEX_HEADER"')
         exit(1)
 
-    if args[1] in ['-h', '-H', '--help', 'help']:
+    if len(args) > 1 and args[1] in ['-h', '-H', '--help', 'help']:
         print_usage()
 
     if len(args) == 2:
@@ -248,7 +249,6 @@ def handle_latex(md_path, header_path, output_name):
 def main():
     debug, md_path, header_path = parse_args(sys.argv)
     output_name = md_path.split('.')[0]
-    os.system('rm -f ' + output_name + '.pdf')
 
     if not handle_latex(md_path, header_path, output_name):
         print('There was an error with latex. Check log.txt')
