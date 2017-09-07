@@ -61,7 +61,9 @@ def conv_span(text):
         else:
             retval.append(part)
 
-    # NOTE: parse 
+    # NOTE: parse links
+    # NOTE: parse footnotes
+    # NOTE: parse citations
     # NOTE: input \ before charaters here
     # escape chars here
     return ''.join(retval)
@@ -75,7 +77,7 @@ def conv_list(block):
 		l_type = l_type.group().strip() if l_type else ""
 
 		retval.append("\\begin{enumerate}") if re.match('\d', l_type[0]) else retval.append("\\begin{itemize}")
-		retval.append("\\item " + line[len('\t' * l_level + l_type):])
+		retval.append("\\item " + conv_span(line[len('\t' * l_level + l_type):]))
 		if idx + 1 < len(block) and l_level < len(re.match("\t*", block[idx + 1]).group()):
 			idx = conv_list_recurse(block, retval, idx+1) - 1
 		retval.append("\\end{enumerate}") if re.match('\d', l_type) else retval.append("\\end{itemize}")
@@ -200,8 +202,7 @@ def main(md_path, header_path, output_name):
 if __name__ == '__main__':
     debug, md_path, header_path = parse_args(sys.argv)
     output_name = md_path.split('.')[0]
-    if debug:
-        os.system('rm -f ' + output_name + '.pdf')
+    os.system('rm -f ' + output_name + '.pdf')
     main(md_path, header_path, output_name)
     if not debug:
         clear_files(output_name)

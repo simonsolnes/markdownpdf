@@ -8,7 +8,7 @@ this is more `coded` text
 this is more text [@fn](fda) kdf
 
 * This
-	* N 1
+	* N 1 *italic*
 * is
 	* N 1
 		* N 2 
@@ -27,7 +27,7 @@ just after list
 
 
 ### This is a really small title
-this is more text with `$\sum{3n}$` inline math
+this is more text with `$$\sum{3n}$$` inline math. And `$this is inline \textbf{latex}$`.
 
 
 ``latex

@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{url}
+\usepackage{graphicx}
 
 % MATH:
 \usepackage{amsmath}
@@ -21,7 +22,7 @@
 % Fonts
 %\usepackage{mathptmx} % rm Times New Roman Derivation
 %\usepackage{libertine} % rm Libertine
-%\usepackage{mathpazo} % rm Palatino derivation
+\usepackage{mathpazo} % rm Palatino derivation
 %\usepackage{helvet} % Helvetica
 %\usepackage{kpfonts} % rm kpfonts
 %\usepackage{inconsolata} % Inconsolata tt
@@ -32,7 +33,8 @@
 \pagestyle{fancy}
 \lhead{}
 \chead{}
-\rhead{\leftmark} % Get current section
+%\rhead{\leftmark} % Get current section
+\rhead{} % Get current section
 \lfoot{}
 \cfoot{}
 \rfoot{\thepage} % Get current page
