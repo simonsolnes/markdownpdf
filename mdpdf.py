@@ -54,25 +54,23 @@ def conv_span(text):
     # escape chars here
     return ''.join(retval)
 
-def conv_list(lines):
+def conv_list(block):
 	retval, idx = [], 0
-	def conv_list_recurse(lines, retval, idx):
-		i = lines[idx]
-		l_level = len(re.match("\t*", i).group())
-		l_type = re.match("\t*(\*|-|\d|\.)*(?=\s)", i)
+	def conv_list_recurse(block, retval, idx):
+		line = block[idx]
+		l_level = len(re.match("\t*", line).group())
+		l_type = re.match("\t*(\*|-|\d|\.)*(?=\s)", line)
 		l_type = l_type.group().strip() if l_type else ""
 
 		retval.append("\\begin{enumerate}") if re.match('\d', l_type[0]) else retval.append("\\begin{itemize}")
-		retval.append("\\item " + i[len('\t' * l_level + l_type):])
-		if idx + 1 < len(lines) and l_level < len(re.match("\t*", lines[idx + 1]).group()):
-			# print("recursing")
-			idx = conv_list_recurse(lines, retval, idx+1) - 1
-
+		retval.append("\\item " + line[len('\t' * l_level + l_type):])
+		if idx + 1 < len(block) and l_level < len(re.match("\t*", block[idx + 1]).group()):
+			idx = conv_list_recurse(block, retval, idx+1) - 1
 		retval.append("\\end{enumerate}") if re.match('\d', l_type) else retval.append("\\end{itemize}")
 		return idx + 1
 
-	while(idx < len(lines)): 
-		idx = conv_list_recurse(lines, retval, idx)
+	while(idx < len(block)): 
+		idx = conv_list_recurse(block, retval, idx)
 
 	return retval
 def conv_quote(lines):
