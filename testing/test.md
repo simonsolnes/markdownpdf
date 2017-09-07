@@ -5,7 +5,7 @@ this *is italic* text, this is *italic, but with **bold** inside* tex
 this is \& thisj
 
 ## Citations
-Now i'm citing a book.[@cite](bok1)
+Now i'm citing a book.[@cite](bok1)[@cite](knuth)
 
 > this is a quote that works
 
