@@ -7,7 +7,12 @@ import re
 To do:
 - spans
     - citations
+        - link a cite id in text to bibliography:
+            text text [@cite](identifier) text text
     - links
+        text text [inline link](http://example.com) text text
+    - footnotes
+        text text [@fn](footnote text) text text
     - escape characters in latex
         - https://stackoverflow.com/questions/13655392/python-insert-a-character-into-a-string#13655397
         - '&%$#_{}~^\\'
@@ -15,13 +20,16 @@ To do:
     - quote
         - nested quotes
     - image
+        ![caption text](path)
     - lists
+        - newlines in list item
         - latex description lists
     - code
     - tables
         - text aligning
 - bibliography
 - title formatting
+- ?reference style formatting links and footnotes
 '''
 
 def conv_span(text):
@@ -51,6 +59,8 @@ def conv_span(text):
         else:
             retval.append(part)
 
+    # NOTE: parse 
+    # NOTE: input \ before charaters here
     # escape chars here
     return ''.join(retval)
 
