@@ -33,7 +33,7 @@ If you are not familiar with markdown, check out [John Gruber Markdown syntax](h
 
 ## mdpdf Syntax
 
-The good parts of this converter is the features that markdown that markdown doesn't support.
+The good parts of this converter is the features that markdown doesn't support.
 
 ### Bibliography and citations
 
