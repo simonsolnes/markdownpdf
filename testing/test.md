@@ -29,6 +29,8 @@ just after list
 ### This is a really small title
 this is more text with `$$\sum{3n}$$` inline math. And `$this is inline \textbf{latex}$`.
 
+`$\href{http://google.com}{google}$`
+
 
 ``latex
 \subsection{Latex inside markdown}
