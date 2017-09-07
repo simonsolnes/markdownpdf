@@ -6,13 +6,6 @@ import re
 '''
 To do:
 - spans
-    - citations
-        - link a cite id in text to bibliography:
-            text text [@cite](identifier) text text
-    - links
-        text text [link text here](http://example.com) text text
-    - footnotes
-        text text [@fn](footnote text) text text
     - escape characters in latex
         - https://stackoverflow.com/questions/13655392/python-insert-a-character-into-a-string#13655397
         - '&%$#_{}~^\\'
@@ -37,10 +30,12 @@ To do:
 def conv_span(text):
     if len(text) < 1:
         return ''
+
     def split_text(text, beg, end):
         retval = [item.split(beg) for item in text.split(end)]
         retval =  [word for sublist in retval for word in sublist]
         return retval.insert(0, '') if text[:2] is beg else retval
+
     def conv_format(text, find, beg = '', end = ''):
         retval = []
         for idx, item in enumerate(text.split(find)):
@@ -62,8 +57,23 @@ def conv_span(text):
             retval.append(part)
     retval =  ''.join(retval)
 
-    text = re.split('\[[^\]]+\]\([^\)]+\)', retval)
-    links = re.findall('\[[^\]]+\]\([^\)]+\)', retval)
+    # links, footnotes
+    plaintexts = re.split('\[[^\]]+\]\([^\)]+\)', retval)
+    references = re.findall('\[[^\]]+\]\([^\)]+\)', retval)
+    tmp = ''
+    for idx, item in enumerate(references):
+        description = re.search('(?<=\[)[^\]]+', item).group()
+        variable = re.search('(?<=\()[^\)]+', item).group()
+        if description[0] != '@':
+            tmp += plaintexts[idx] + '\\href{' + variable + '}{' + description + '}'
+        elif description == '@fn':
+            tmp += plaintexts[idx] + '\\footnote{' + variable + '}'
+        elif description == '@cite':
+            tmp += plaintexts[idx] + '\\cite{' + variable + '}'
+    retval = tmp + plaintexts[-1]
+
+    return retval
+    
 
 def conv_list(block):
 	retval, idx = [], 0

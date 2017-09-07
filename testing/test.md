@@ -27,9 +27,10 @@ just after list
 
 
 ### This is a really small title
-this is more text with `$$\sum{3n}$$` inline math. And `$this is inline \textbf{latex}$`.
+this is more text with `$$\sum{3n}$$` inline math [@fn](this is a footnote). And `$this is inline \textbf{latex}$`.
+[this is a link](http://google.com)
+end of link
 
-`$\href{http://google.com}{google}$`
 
 
 ``latex
