@@ -3,6 +3,7 @@ import sys
 import os.path
 import re
 from pprint import pprint
+import subprocess
 '''
 To do:
 - blocks
@@ -11,7 +12,6 @@ To do:
     - code
     - tables
         - text aligning
-- bibliography
 - title formatting
 
 - future
@@ -217,10 +217,10 @@ def parse_args(args):
 
     return debug, md_path, header_path
 
-def main(md_path, header_path, output_name):
+def handle_latex(md_path, header_path, output_name):
     tex_lines, uses_bib = conv_document(md_path)
-    # NOTE: tmp
 
+    os.system("echo | tr '\\n' '\\0' > log.txt")
     with open(output_name + '.latex', 'w') as tex_doc, open(header_path, 'r') as header:
         for line in header:
             tex_doc.write(line) 
@@ -231,17 +231,25 @@ def main(md_path, header_path, output_name):
             tex_doc.write(line + '\n')
         tex_doc.write('\\end{document}\n')
     if uses_bib:
-        os.system('latex ' + output_name + '.latex')
-        os.system('bibtex ' + output_name + '.aux')
-        os.system('latex ' + output_name + '.latex')
+        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'): return False
+        if os.system('bibtex ' + output_name + '.aux >> log.txt'): return False
+        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'): return False
 
-    os.system('pdflatex -interaction=batchmode ' + output_name + '.latex')
-    
+    if os.system('pdflatex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'): return False
+    return True
 
-if __name__ == '__main__':
+def main():
     debug, md_path, header_path = parse_args(sys.argv)
     output_name = md_path.split('.')[0]
     os.system('rm -f ' + output_name + '.pdf')
-    main(md_path, header_path, output_name)
+
+    if not handle_latex(md_path, header_path, output_name):
+        print('There was an error with latex. Check log.txt')
+    else:
+        os.system('rm -f log.txt')
+        
+
     if not debug:
         clear_files(output_name)
+if __name__ == '__main__':
+    main()
