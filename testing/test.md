@@ -8,8 +8,20 @@ this is more `coded` text
 this is more text [@fn](fda) kdf
 
 * This
+	* N 1
 * is
+	* N 1
+		* N 2 
+			* N 3
 * A list
+
+1. Numered
+	60 N 1
+		* N 2
+2. List
+
+- Hyphen'd
+- List
 
 just after list
 
