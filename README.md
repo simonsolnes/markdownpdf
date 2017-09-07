@@ -41,7 +41,7 @@ Citating a source:
 	
 	Lorem ipsum[@cite](my-book) dolor sit amet[@cite](source2)
 
-Creating a bibliography with identifiers used in the example above (insert this at the bottom):
+Creating a bibliography with identifiers used in the example above (insert this at the bottom of your document):
 
 	``bib
 	my-book[book]:
