@@ -35,7 +35,7 @@ If you are not familiar with markdown, check out [John Gruber Markdown syntax](h
 
 The good parts of this converter is the features that markdown that markdown doesn't support.
 
-## Bibliography and citations
+### Bibliography and citations
 
 Citating a source:
 	
@@ -61,14 +61,14 @@ In terms of [BibTeX format](http://www.bibtex.org/Format/) the mdpdf bibligraphy
 		tag: tag-contents
 	``
 
-## Footnotes
+### Footnotes
 
 Creating a footnote:
 	
 	Lorem impsum [@fn](text that will appear in the footnote)
 	
 
-## Latex code
+### Latex code
 
 Insert latex code inline:
 
@@ -108,8 +108,3 @@ These features will hopefully be implemented in the future:
 - Being able to add tex code after `\begin{document}`
 - Title formatting
 - Latex description lists
-
-## Dependencies
-
-1. Python
-2. pdflatex
