@@ -108,3 +108,4 @@ These features will hopefully be implemented in the future:
 - Being able to add tex code after `\begin{document}`
 - Title formatting
 - Latex description lists
+- Lists with `•`

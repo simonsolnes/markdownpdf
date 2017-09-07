@@ -117,7 +117,7 @@ def conv_document(path):
     md_doc = open(path, 'r')
     lines = [item.rstrip('\n') for item in md_doc.readlines()]
     i = 0
-    used_bib = False
+    uses_bib = False
     while i < len(lines):
         text = lines[i]
         end = i + 1
@@ -213,6 +213,7 @@ def parse_args(args):
         if args[1] != '-d':
             print_usage()
         debug = True
+        md_path = args[1]
     else:
         print_usage()
         
@@ -227,7 +228,6 @@ def parse_args(args):
 
 def handle_latex(md_path, header_path, output_name):
     tex_lines, uses_bib = conv_document(md_path)
-
     os.system("echo | tr '\\n' '\\0' > log.txt")
     with open(output_name + '.latex', 'w') as tex_doc, open(header_path, 'r') as header:
         for line in header:
@@ -239,19 +239,25 @@ def handle_latex(md_path, header_path, output_name):
             tex_doc.write(line + '\n')
         tex_doc.write('\\end{document}\n')
     if uses_bib:
-        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'): return False
-        if os.system('bibtex ' + output_name + '.aux >> log.txt'): return False
-        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'): return False
+        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
+            return 'first latex run'
+        if os.system('bibtex ' + output_name + '.aux >> log.txt'):
+            return 'bibtex run'
+        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
+            return 'second latex run'
 
-    if os.system('pdflatex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'): return False
-    return True
+    if os.system('pdflatex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
+        return 'pdflatex run'
+    return ''
 
 def main():
     debug, md_path, header_path = parse_args(sys.argv)
     output_name = md_path.split('.')[0]
 
-    if not handle_latex(md_path, header_path, output_name):
+    errmsg = handle_latex(md_path, header_path, output_name)
+    if errmsg != '':
         print('There was an error with latex. Check log.txt')
+        print('errmsg:', errmsg)
     else:
         os.system('rm -f log.txt')
         
