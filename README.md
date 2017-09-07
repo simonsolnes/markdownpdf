@@ -57,7 +57,7 @@ Creating a bibliography with identifiers used in the example above (insert this 
 In terms of [BibTeX format](http://www.bibtex.org/Format/) the mdpdf bibligraphy syntax looks like this:
 
 	``bib
-	@entry[identifier-tag]:
+	entry[identifier-tag]:
 		tag: tag-contents
 	``
 
