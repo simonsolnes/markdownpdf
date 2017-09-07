@@ -21,15 +21,17 @@ To do:
         - nested quotes
     - image
         ![caption text](path)
-    - lists
-        - newlines in list item
-        - latex description lists
     - code
     - tables
         - text aligning
 - bibliography
 - title formatting
-- ?reference style formatting links and footnotes
+
+- future
+    - reference style formatting links and footnotes
+    - lists
+        - newlines in list item
+        - latex description lists
 '''
 
 def conv_span(text):
