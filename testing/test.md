@@ -5,7 +5,7 @@ this *is italic* text, this is *italic, but with **bold** inside* tex
 this is more `coded` text
 
 ## Can this be a subtitle
-this is more text
+this is more text [@fn](fda) kdf
 
 * This
 	* N 1
@@ -24,6 +24,7 @@ this is more text
 - List
 
 just after list
+
 
 ### This is a really small title
 this is more text with `$\sum{3n}$` inline math
