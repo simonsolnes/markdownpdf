@@ -188,32 +188,39 @@ def clear_files(output_name = '*'):
 
 def parse_args(args):
     def print_usage():
-        print('usage: mdpdf [markdown document] [header file]')
+        print('usage: mdpdf [markdown document]')
         print('optional flags: h: help, d: debug mode, c: rm latex files')
         exit(0)
     debug = False
-    if len(args) == 3:
-        md_path = args[1]
-        header_path = args[2]
-    elif len(args) == 4:
-        if args[1] in ['-h', '-H', '--help', 'help']:
-            print_usage()
-        elif args[1] == '-d':
-            debug = True
-        md_path = args[2]
-        header_path = args[3]
-    elif len(args) == 2 and args[1] == '-c':
+
+    if len(args) == 2 and args[1] == '-c':
         clear_files()
         exit(0)
+
+    if 'LATEX_HEADER' in os.environ:
+        header_path = os.environ['LATEX_HEADER']
     else:
+        print('Please path to latex header as the environment variable "LATEX_HEADER"')
+        exit(1)
+
+    if args[1] in ['-h', '-H', '--help', 'help']:
         print_usage()
 
+    if len(args) == 2:
+        md_path = args[1]
+    elif len(args) == 3:
+        if args[1] != '-d':
+            print_usage()
+        debug = True
+    else:
+        print_usage()
+        
     if not os.path.isfile(md_path):
         print('Markdown document doesn\'t exist')
-        exit(0)
+        exit(1)
     if not os.path.isfile(header_path):
-        print('Header document doesn\'t exist')
-        exit(0)
+        print('Path to header document is broken. Document doesn\'t exist')
+        exit(1)
 
     return debug, md_path, header_path
 
