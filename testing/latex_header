@@ -3,7 +3,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{url}
+\usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage[backend=bibtex8]{biblatex}
 
 % MATH:
 \usepackage{amsmath}
@@ -57,8 +59,6 @@
 
 % Line height
 \renewcommand{\baselinestretch}{1}
-
-\bibliographystyle{plain}
 
 % Title
 \title{\textbf{INF-1100 Assignment 2 Report}}

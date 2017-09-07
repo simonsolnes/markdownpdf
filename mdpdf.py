@@ -2,23 +2,10 @@
 import sys
 import os.path
 import re
-
+from pprint import pprint
 '''
 To do:
-- spans
-    - citations
-        - link a cite id in text to bibliography:
-            text text [@cite](identifier) text text
-    - links
-        text text [inline link](http://example.com) text text
-    - footnotes
-        text text [@fn](footnote text) text text
-    - escape characters in latex
-        - https://stackoverflow.com/questions/13655392/python-insert-a-character-into-a-string#13655397
-        - '&%$#_{}~^\\'
 - blocks
-    - quote
-        - nested quotes
     - image
         ![caption text](path)
     - code
@@ -32,15 +19,21 @@ To do:
     - lists
         - newlines in list item
         - latex description lists
+    - escape characters in latex
+        - https://stackoverflow.com/questions/13655392/python-insert-a-character-into-a-string#13655397
+        - '&%$#_{}~^\\'
+    - nested quotes
 '''
 
 def conv_span(text):
     if len(text) < 1:
         return ''
+
     def split_text(text, beg, end):
         retval = [item.split(beg) for item in text.split(end)]
         retval =  [word for sublist in retval for word in sublist]
         return retval.insert(0, '') if text[:2] is beg else retval
+
     def conv_format(text, find, beg = '', end = ''):
         retval = []
         for idx, item in enumerate(text.split(find)):
@@ -60,13 +53,25 @@ def conv_span(text):
             retval.append(tmp)
         else:
             retval.append(part)
+    retval =  ''.join(retval)
 
-    # NOTE: parse links
-    # NOTE: parse footnotes
-    # NOTE: parse citations
-    # NOTE: input \ before charaters here
-    # escape chars here
-    return ''.join(retval)
+    # links, footnotes, citations
+    plaintexts = re.split('\[[^\]]+\]\([^\)]+\)', retval)
+    references = re.findall('\[[^\]]+\]\([^\)]+\)', retval)
+    tmp = ''
+    for idx, item in enumerate(references):
+        description = re.search('(?<=\[)[^\]]+', item).group()
+        variable = re.search('(?<=\()[^\)]+', item).group()
+        if description[0] != '@':
+            tmp += plaintexts[idx] + '\\href{' + variable + '}{' + description + '}'
+        elif description == '@fn':
+            tmp += plaintexts[idx] + '\\footnote{' + variable + '}'
+        elif description == '@cite':
+            tmp += plaintexts[idx] + '\\cite{' + variable + '}'
+    retval = tmp + plaintexts[-1]
+
+    return retval
+    
 
 def conv_list(block):
 	retval, idx = [], 0
@@ -87,8 +92,12 @@ def conv_list(block):
 		idx = conv_list_recurse(block, retval, idx)
 
 	return retval
-def conv_quote(lines):
-    pass
+def conv_quote(block):
+    block[0] = block[0][2:]
+    block.insert(0, '\\begin{quote}')
+    block.append('\\end{quote}')
+    return block
+    
 def conv_table(lines):
     pass
 def conv_image(lines):
@@ -107,6 +116,7 @@ def conv_document(path):
     md_doc = open(path, 'r')
     lines = [item.rstrip('\n') for item in md_doc.readlines()]
     i = 0
+    used_bib = False
     while i < len(lines):
         text = lines[i]
         end = i + 1
@@ -119,10 +129,19 @@ def conv_document(path):
         elif re.match('``latex$', text):
             end = locate_end(lines[i + 1:], lambda x: x == '``', i)
             block = lines[i + 1: end]
+        # bibliography
+        elif re.match('``bib$', text):
+            end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+            block = generate_references(lines[i + 1: end], path[:-3] + '.bib')
+            uses_bib = True
         # list
         elif re.match('(\d\.|-|\*)\s', text):
             end = locate_end(lines[i + 1:], lambda x: x == '', i)
             block = conv_list(lines[i:end])
+        # block quotes
+        elif re.match('\>\040', text):
+            end = locate_end(lines[i + 1:], lambda x: x == '', i)
+            block = conv_quote(lines[i:end])
         else:
             block = conv_span(text)
 
@@ -131,12 +150,36 @@ def conv_document(path):
         i = end
     md_doc.close()
 
-    return tex
+    return tex, uses_bib
 
-def uses_bibliography(md_path):
-    return False
-def gen_ref(md_path):
-    pass
+def generate_references(block, path):
+    
+    hastab = lambda x: x[:4] == '    ' or x[0] == '\t'
+    entries = []
+    i = 0
+    while i < len(block):
+        line = block[i]
+        if not hastab(line):
+            table = {}
+            table['entry-name'] = re.search('^[^\[]+', line).group()
+            table['entry-type'] = re.search('(?<=\[)[^\]]+', line).group()
+            i += 1
+            while i < len(block) and hastab(block[i]):
+                table[re.search('[^\s:]+(?=:)', block[i]).group()] = re.sub('^\s*[^\s]*:\s*', '', block[i])
+                i += 1
+            entries.append(table)
+            continue
+        i += 1
+    with open(path, 'w') as f:
+        for entry in entries:
+            f.write('@' + entry['entry-type'] + '{' + entry['entry-name'] + ',\n')
+            del entry['entry-type']
+            del entry['entry-name']
+            for key, val in entry.items():
+                f.write('\t' + key + ' = {' + val + '},\n')
+            f.write('}\n')
+        
+    return '\\printbibliography'
 
 def clear_files(output_name = '*'):
     ext = '.aux .log .toc .out .bbl .bcf .blg .dvi .bib .run.xml -blx.bib .bib .latex'
@@ -175,7 +218,8 @@ def parse_args(args):
     return debug, md_path, header_path
 
 def main(md_path, header_path, output_name):
-    uses_bib = uses_bibliography(md_path)
+    tex_lines, uses_bib = conv_document(md_path)
+    # NOTE: tmp
 
     with open(output_name + '.latex', 'w') as tex_doc, open(header_path, 'r') as header:
         for line in header:
@@ -183,15 +227,10 @@ def main(md_path, header_path, output_name):
         if uses_bib:
             tex_doc.write('\\addbibresource{' + output_name + '.bib}\n')
         tex_doc.write('\\begin{document}\n')
-        for line in conv_document(md_path):
+        for line in tex_lines:
             tex_doc.write(line + '\n')
-        if uses_bib:
-            tex_doc.write('\\printbibliography\n')
         tex_doc.write('\\end{document}\n')
     if uses_bib:
-        with open(output_name + '.bib') as ref:
-            for line in gen_ref(md_path):
-                ref.write(line)
         os.system('latex ' + output_name + '.latex')
         os.system('bibtex ' + output_name + '.aux')
         os.system('latex ' + output_name + '.latex')
