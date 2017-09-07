@@ -10,7 +10,7 @@ To do:
         - link a cite id in text to bibliography:
             text text [@cite](identifier) text text
     - links
-        text text [inline link](http://example.com) text text
+        text text [link text here](http://example.com) text text
     - footnotes
         text text [@fn](footnote text) text text
     - escape characters in latex
@@ -60,13 +60,10 @@ def conv_span(text):
             retval.append(tmp)
         else:
             retval.append(part)
+    retval =  ''.join(retval)
 
-    # NOTE: parse links
-    # NOTE: parse footnotes
-    # NOTE: parse citations
-    # NOTE: input \ before charaters here
-    # escape chars here
-    return ''.join(retval)
+    text = re.split('\[[^\]]+\]\([^\)]+\)', retval)
+    links = re.findall('\[[^\]]+\]\([^\)]+\)', retval)
 
 def conv_list(block):
 	retval, idx = [], 0
