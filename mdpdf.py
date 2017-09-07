@@ -197,7 +197,6 @@ def main(md_path, header_path, output_name):
         os.system('latex ' + output_name + '.latex')
 
     os.system('pdflatex -interaction=batchmode ' + output_name + '.latex')
-    
 
 if __name__ == '__main__':
     debug, md_path, header_path = parse_args(sys.argv)
