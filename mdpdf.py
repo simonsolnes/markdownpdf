@@ -13,8 +13,6 @@ To do:
     - tables
         - text aligning
     - comments
-- add code after begin document
-    - title formatting
 
 - future
     - reference style formatting links and footnotes
@@ -113,10 +111,15 @@ def conv_document(path):
             if matchfunc(line):
                 return idx + default + 1
         return default
-    tex = []
     md_doc = open(path, 'r')
     lines = [item.rstrip('\n') for item in md_doc.readlines()]
-    i = 0
+    uses_title = re.match('\$', lines[0])
+    if uses_title:
+        title = lines[0][2:]
+        lines = lines[1:]
+    else:
+        title = ''
+    i, tex = 0, []
     uses_bib = False
     while i < len(lines):
         text = lines[i]
@@ -150,8 +153,9 @@ def conv_document(path):
         if isinstance(block, list): tex += block
         i = end
     md_doc.close()
+    #NOTE: move this?
 
-    return tex, uses_bib
+    return tex, uses_bib, uses_title, title
 
 def generate_references(block, path):
     
@@ -181,6 +185,19 @@ def generate_references(block, path):
             f.write('}\n')
         
     return '\\printbibliography'
+
+def gen_header(header_path, uses_title, title):
+    header = open(header_path, 'r').readlines()
+    if not uses_title:
+        return header
+    for idx, line in enumerate(header):
+        if bool(re.search('\$title\$', line)):
+            tmp = re.split('\$title\$', line)
+            tmp.insert(1, title)
+            header[idx] = ''.join(tmp)
+            
+    return header
+    
 
 def clear_files(output_name = '*'):
     ext = '.aux .log .toc .out .bbl .bcf .blg .dvi .bib .run.xml -blx.bib .bib .latex'
@@ -226,15 +243,18 @@ def parse_args(args):
 
     return debug, md_path, header_path
 
-def handle_latex(md_path, header_path, output_name):
-    tex_lines, uses_bib = conv_document(md_path)
+def parse(md_path, header_path, output_name):
+    tex_lines, uses_bib, uses_title, title = conv_document(md_path)
     os.system("echo | tr '\\n' '\\0' > log.txt")
-    with open(output_name + '.latex', 'w') as tex_doc, open(header_path, 'r') as header:
+    header = gen_header(header_path, uses_title, title)
+    with open(output_name + '.latex', 'w') as tex_doc:
         for line in header:
             tex_doc.write(line) 
         if uses_bib:
             tex_doc.write('\\addbibresource{' + output_name + '.bib}\n')
         tex_doc.write('\\begin{document}\n')
+        if uses_title:
+            tex_doc.write('\\maketitle')
         for line in tex_lines:
             tex_doc.write(line + '\n')
         tex_doc.write('\\end{document}\n')
@@ -254,7 +274,7 @@ def main():
     debug, md_path, header_path = parse_args(sys.argv)
     output_name = md_path.split('.')[0]
 
-    errmsg = handle_latex(md_path, header_path, output_name)
+    errmsg = parse(md_path, header_path, output_name)
     if errmsg != '':
         print('There was an error with latex. Check log.txt')
         print('errmsg:', errmsg)

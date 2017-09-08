@@ -66,7 +66,19 @@ In terms of [BibTeX format](http://www.bibtex.org/Format/) the mdpdf bibligraphy
 Creating a footnote:
 	
 	Lorem impsum [@fn](text that will appear in the footnote)
+
+### Title
+
+To add a title to your document, insert this at the very top:
 	
+	$ This is a title
+
+The program will replace any occurence of literally `$title$` in your header with the example above, and insert `\maketitle` right after `\begin{document}`. Add your own title formatting in your header. Example:
+	
+	\title{
+		\large{$title}
+		\vspace{2cm}
+	}
 
 ### Latex code
 
@@ -106,6 +118,5 @@ These features will hopefully be implemented in the future:
 - Recursive blockquotes
 - Escaping special latex characters
 - Being able to add tex code after `\begin{document}`
-- Title formatting
 - Latex description lists
 - Lists with `•`
