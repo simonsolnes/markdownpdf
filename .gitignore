@@ -1,4 +1,5 @@
 .DS_Store
+testing/.DS_Store
 testing/*.aux 
 testing/*.log
 testing/*.toc
