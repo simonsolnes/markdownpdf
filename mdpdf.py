@@ -6,6 +6,11 @@ from pprint import pprint
 import subprocess
 '''
 To do:
+- bugs:
+    - lists don't increment number
+    - document cannot end with a list
+- improvement
+    - better latex debugging
 - blocks
     - image
         ![caption text](path)
@@ -13,6 +18,7 @@ To do:
     - tables
         - text aligning
     - comments
+    - newlines for double space
 
 - future
     - reference style formatting links and footnotes
@@ -230,7 +236,7 @@ def parse_args(args):
         if args[1] != '-d':
             print_usage()
         debug = True
-        md_path = args[1]
+        md_path = args[2]
     else:
         print_usage()
         
