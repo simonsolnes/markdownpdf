@@ -279,11 +279,11 @@ def parse(md_path, header_path, output_name):
             tex_doc.write(line + '\n')
         tex_doc.write('\\end{document}\n')
     if uses_bib:
-        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
+        if os.system('pdflatex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
             return 'first latex run'
         if os.system('bibtex ' + output_name + '.aux >> log.txt'):
             return 'bibtex run'
-        if os.system('latex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
+        if os.system('pdflatex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
             return 'second latex run'
 
     if os.system('pdflatex -interaction=nonstopmode ' + output_name + '.latex >> log.txt'):
