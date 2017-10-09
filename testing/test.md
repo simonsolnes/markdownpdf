@@ -1,3 +1,11 @@
+1. cat
+	1. small cat
+	2. big cat
+	3. cute cat
+2. dog
+3. fish
+4. shark
+
 # This is a *title* with ema
 this *is italic* text, this is *italic, but with **bold** inside* tex
 

@@ -5,6 +5,7 @@ Markdown to PDF converter that is not crappy.
 ## Usage
 
 - Create an environment variable named 'LATEX_HEADER' with the path to your latex header. The latex header should everything in you standard file down to and excluding `\begin{document`. I bash this can be done by addding this line to `.bashrc`: `export LATEX_HEADER="full-path"`. If you don't have a header, or want to see what packages the converter uses, check out the minimal latex header in the repo.
+
 - Make sure that you have python installed
 - Make sure that you have the tex tools pdflatex, latex, bibtex 
 - Optionally create an alias to the `mdpdf.py` file so that you can run it wherever in the filesystem
