@@ -1,3 +1,9 @@
+- onelist
+
+- single list
+- double list
+
+
 1. cat
 	1. small cat
 	2. big cat
@@ -32,8 +38,12 @@ this is more text [@fn](fda) kdf
 * A list
 
 1. Numered
-	60 N 1
-		* N 2
+	60. N 1
+		1. N 2
+		1. hei
+			* kjdf
+			- df
+		2. df
 2. List
 
 - Hyphen'd

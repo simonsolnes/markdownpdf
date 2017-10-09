@@ -31,6 +31,9 @@ To do:
     - nested quotes
 '''
 
+class ParseError(Exception):
+    pass
+
 def conv_span(text):
     if len(text) < 1:
         return ''
@@ -79,36 +82,40 @@ def conv_span(text):
     return retval
     
 def conv_list(block):
-    retval, idx = [], 0
+    retval = []
 
     def prefix(x):
-        prefix = re.match("\t*(\*|-|\d|\.)*(?=\s)", x)
-        prefix = prefix.group().strip() if prefix else ""
-        return prefix
+        pre = re.match("\t*(\*|-|\d+\.)*(?=\s)", x).group().strip()
+        if not pre:
+            raise ParseError()
+        return pre
     def list_type(x):
-        prefix = re.match("\t*(\*|-|\d|\.)*(?=\s)", x)
-        prefix = prefix.group().strip() if prefix else ""
-        return 'enumerate' if re.match('\d', prefix) else 'itemize'
+        return 'enumerate' if re.match('\d', prefix(x)) else 'itemize'
         
-
-    def conv_list_recurse(block, retval, idx):
-        line = block[idx]
+    def conv_list_recurse(block, retval, idx, reclvl):
+        reclvl += 1
         level = lambda x: len(re.match("\t*", x).group())
+        name = block[idx][len('\t' * level(block[idx]) + prefix(block[idx])) + 1:]
 
-        while idx + 1 < len(block):
-            retval.append("\\item " + conv_span(block[idx][len('\t' * level(block[idx]) + prefix(line)):]))
+        while idx + 1 <= len(block):
+            line = block[idx]
+            retval.append("\\item " + conv_span(line[len('\t' * level(line) + prefix(line)) + 1:]))
             if idx + 1 < len(block) and level(line) < level(block[idx + 1]):
-                retval.append('\\begin{' + list_type(line) + '}')
-                idx = conv_list_recurse(block, retval, idx+1) - 1
-                retval.append('\\end{' + list_type(line) + '}')
-            if level(block[idx]) > level(block[idx + 1]):
+                cur_list_type = list_type(block[idx + 1])
+                retval.append('\\begin{' + cur_list_type + '}')
+                idx = conv_list_recurse(block, retval, idx + 1, reclvl)
+                retval.append('\\end{' + cur_list_type + '}')
+            if idx + 1 < len(block) and level(line) > level(block[idx + 1]):
+                if level(block[idx + 1]) == reclvl:
+                    idx += 1
+                    continue
                 break
             idx += 1
-        return idx + 1
+        return idx
 
     retval.append('\\begin{' + list_type(block[0]) + '}')
-    while(idx < len(block)): 
-        idx = conv_list_recurse(block, retval, idx)
+    # while(idx < len(block)): 
+    conv_list_recurse(block, retval, 0, -1)
     retval.append('\\end{' + list_type(block[-1]) + '}')
 
     return retval
