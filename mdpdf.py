@@ -79,7 +79,6 @@ def conv_span(text):
     return retval
     
 def conv_list(block):
-    print(block)
     retval, idx = [], 0
 
     def prefix(x):
