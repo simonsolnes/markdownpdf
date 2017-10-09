@@ -79,24 +79,40 @@ def conv_span(text):
     return retval
     
 def conv_list(block):
-	retval, idx = [], 0
-	def conv_list_recurse(block, retval, idx):
-		line = block[idx]
-		l_level = len(re.match("\t*", line).group())
-		l_type = re.match("\t*(\*|-|\d|\.)*(?=\s)", line)
-		l_type = l_type.group().strip() if l_type else ""
+    print(block)
+    retval, idx = [], 0
 
-		retval.append("\\begin{enumerate}") if re.match('\d', l_type[0]) else retval.append("\\begin{itemize}")
-		retval.append("\\item " + conv_span(line[len('\t' * l_level + l_type):]))
-		if idx + 1 < len(block) and l_level < len(re.match("\t*", block[idx + 1]).group()):
-			idx = conv_list_recurse(block, retval, idx+1) - 1
-		retval.append("\\end{enumerate}") if re.match('\d', l_type) else retval.append("\\end{itemize}")
-		return idx + 1
+    def prefix(x):
+        prefix = re.match("\t*(\*|-|\d|\.)*(?=\s)", x)
+        prefix = prefix.group().strip() if prefix else ""
+        return prefix
+    def list_type(x):
+        prefix = re.match("\t*(\*|-|\d|\.)*(?=\s)", x)
+        prefix = prefix.group().strip() if prefix else ""
+        return 'enumerate' if re.match('\d', prefix) else 'itemize'
+        
 
-	while(idx < len(block)): 
-		idx = conv_list_recurse(block, retval, idx)
+    def conv_list_recurse(block, retval, idx):
+        line = block[idx]
+        level = lambda x: len(re.match("\t*", x).group())
 
-	return retval
+        while idx + 1 < len(block):
+            retval.append("\\item " + conv_span(block[idx][len('\t' * level(block[idx]) + prefix(line)):]))
+            if idx + 1 < len(block) and level(line) < level(block[idx + 1]):
+                retval.append('\\begin{' + list_type(line) + '}')
+                idx = conv_list_recurse(block, retval, idx+1) - 1
+                retval.append('\\end{' + list_type(line) + '}')
+            if level(block[idx]) > level(block[idx + 1]):
+                break
+            idx += 1
+        return idx + 1
+
+    retval.append('\\begin{' + list_type(block[0]) + '}')
+    while(idx < len(block)): 
+        idx = conv_list_recurse(block, retval, idx)
+    retval.append('\\end{' + list_type(block[-1]) + '}')
+
+    return retval
 def conv_quote(block):
     block[0] = block[0][2:]
     block.insert(0, '\\begin{quote}')
@@ -159,8 +175,6 @@ def conv_document(path):
         if isinstance(block, list): tex += block
         i = end
     md_doc.close()
-    #NOTE: move this?
-
     return tex, uses_bib, uses_title, title
 
 def generate_references(block, path):
@@ -207,8 +221,8 @@ def gen_header(header_path, uses_title, title):
 
 def clear_files(output_name = '*'):
     ext = '.aux .log .toc .out .bbl .bcf .blg .dvi .bib .run.xml -blx.bib .bib .latex'
-    for i in ext.split(' '):
-        os.system('rm -f ' + output_name + i)
+    for suffix in ext.split(' '):
+        os.system('rm -f ' + output_name + suffix)
 
 def parse_args(args):
     def print_usage():
@@ -224,7 +238,7 @@ def parse_args(args):
     if 'LATEX_HEADER' in os.environ:
         header_path = os.environ['LATEX_HEADER']
     else:
-        print('Please path to latex header as the environment variable "LATEX_HEADER"')
+        print('Please set path to latex header as the environment variable "LATEX_HEADER"')
         exit(1)
 
     if len(args) > 1 and args[1] in ['-h', '-H', '--help', 'help']:
@@ -280,15 +294,18 @@ def main():
     debug, md_path, header_path = parse_args(sys.argv)
     output_name = md_path.split('.')[0]
 
+    if debug:
+        clear_files(output_name)
+
     errmsg = parse(md_path, header_path, output_name)
     if errmsg != '':
         print('There was an error with latex. Check log.txt')
         print('errmsg:', errmsg)
     else:
         os.system('rm -f log.txt')
-        
 
     if not debug:
         clear_files(output_name)
+
 if __name__ == '__main__':
     main()
