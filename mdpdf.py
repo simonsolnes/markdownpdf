@@ -21,6 +21,7 @@ To do:
 	- newlines for double space
 
 - future
+        - Refrence to, and tagging sections
 	- reference style formatting links and footnotes
 	- lists
 		- newlines in list item
