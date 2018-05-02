@@ -1,6 +1,6 @@
 # Markdown to PDF
 
-Markdown to PDF converter that is not crappy.
+Markdown to PDF converter.
 
 ## Usage
 
