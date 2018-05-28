@@ -1,4 +1,5 @@
 # Markdown to PDF
+![HitCount](http://solnes.co/hitcounter-badge/simonsolnes/markdownpdf.svg)
 
 Markdown to PDF converter that is not crappy.
 
