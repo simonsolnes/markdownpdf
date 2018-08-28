@@ -14,3 +14,5 @@ testing/*-blx.bib
 testing/*.bib
 testing/*.latex
 testing/*.pdf
+/tmp
+/Dockerfile

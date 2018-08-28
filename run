@@ -1,0 +1,20 @@
+#!/bin/bash
+mkdir tmp
+cp $LATEX_HEADER tmp/latex_header.tex
+echo "
+from ubuntu:latest
+run apt-get -y update
+run apt-get -y upgrade
+run apt-get install -y python3 texlive-full
+
+add testing/test.md /home
+add mdpdf.py /home
+add tmp/latex_header.tex /home
+
+workdir /home
+env LATEX_HEADER=latex_header.tex
+#cmd python3 mdpdf.py test.md
+" > Dockerfile
+
+docker build -t mdpdf .
+docker run -it --rm mdpdf
