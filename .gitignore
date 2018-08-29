@@ -16,3 +16,4 @@ testing/*.latex
 testing/*.pdf
 /tmp
 /Dockerfile
+/testing/tmp
