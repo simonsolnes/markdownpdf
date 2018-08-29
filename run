@@ -1,20 +1,21 @@
 #!/bin/bash
 mkdir tmp
 cp $LATEX_HEADER tmp/latex_header.tex
+cp $1 tmp/doc.md
 echo "
-from ubuntu:latest
-run apt-get -y update
-run apt-get -y upgrade
-run apt-get install -y python3 texlive-full
+from base/archlinux
+run pacman -Sy
+run pacman -S --noconfirm python3
+run pacman -S --noconfirm texlive-most
 
-add testing/test.md /home
+add tmp/doc.md /home/doc.md
 add mdpdf.py /home
 add tmp/latex_header.tex /home
 
 workdir /home
 env LATEX_HEADER=latex_header.tex
-#cmd python3 mdpdf.py test.md
+cmd python3 mdpdf.py doc.md; mv doc.pdf tmp/
 " > Dockerfile
 
 docker build -t mdpdf .
-docker run -it --rm mdpdf
+docker run -it --rm -v $(pwd)/tmp:/home/tmp  mdpdf
