@@ -1,15 +1,51 @@
 #!/bin/bash
-if [ -z "$1" ] && [ ! -f "$1" ]; then
-	echo -e "No argument supplied"
+function help() {
+	echo -e "Usage: ./run [-(hds)|--help|--debug|--silent] FILE" 1>&$out
 	exit
-elif [ ! -f "$1" ]; then
-	echo -e "File not found!"
-	exit
+}
+
+function flag_check() {
+	if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+		help
+	elif [ "$1" != "-d" ] && [ "$1" != "--debug" ]; then
+		exec 1>/dev/null
+	fi
+	if [ "$1" == "-s" ] || [ "$1" == "--silent" ]; then
+		exec 1>/dev/null
+		exec 2>/dev/null
+	fi
+}
+
+function arg_check() {
+	if [ ! -f "$1" ]; then
+		echo "File not found! 1" 1>&$out
+		exit
+	elif [ "$(echo $1 | tail -c 4)" != ".md" ]; then
+		echo "File is not a markdown file!" 1>&$out
+		help
+	fi
+}
+
+exec 3>&1
+exec 4>&2
+out='3'
+err='4'
+file="$1"
+
+if [ $# == 1 ]; then
+	flag_check $1
+	arg_check $1
+elif [ $# == 2 ]; then
+	flag_check $1
+	arg_check $2
+	file="$2"
+else
+	echo "Invalid number of arguments!"
+	help
 fi
 
 root="/tmp/markdownpdf/"
 doc="doc.md"
-file="$1"
 new_file="${root}$(basename $doc .md).pdf"
 new_pdf="$(basename $file .md).pdf"
 header="latex_header.tex"
@@ -33,13 +69,13 @@ env LATEX_HEADER=$header
 cmd python3 mdpdf.py $doc
 " > Dockerfile
 
-sudo docker build -t mdpdf . > /dev/null
-sudo docker run -it --rm -v $root:/home/ mdpdf > /dev/null
+sudo docker build -t mdpdf .
+sudo docker run -it --rm -v $root:/home/ mdpdf
 
 if [ ! -f "$new_file" ]; then
 	echo -e "Pdf not generated!"
 	exit
 fi
 
-cd - > /dev/null
+cd -
 mv "$new_file" $new_pdf
