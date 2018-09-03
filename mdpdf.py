@@ -219,7 +219,7 @@ def generate_references(block, path):
 				f.write('\t' + key + ' = {' + val + '},\n')
 			f.write('}\n')
 		
-	return '\\printbibliography'
+	return '\printbibliography[title={Referanser}]'
 
 def gen_header(header_path, title):
 	header = open(header_path, 'r').readlines()
