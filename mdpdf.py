@@ -134,7 +134,20 @@ def conv_table(lines):
 def conv_image(lines):
 	pass
 def conv_code(lines):
-	pass
+	block = []
+	block.append("\\begin{lstlisting}")
+	block += lines
+	block.append("\\end{lstlisting}")
+	return block
+
+# code with highligthing
+def conv_code_high(lines):
+	block = []
+	block.append("\\begin{lstlisting}[language=" + lines[0][7:] + "]")
+	block += lines[1:]
+	block.append("\\end{lstlisting}")
+	return block
+	
 
 def conv_header(line):
 	pass
@@ -160,6 +173,7 @@ def conv_document(path):
 	uses_bib = False
 	while i < len(lines):
 		text = lines[i]
+
 		end = i + 1
 		# heading
 		if re.match('#+\s', text):
@@ -171,10 +185,21 @@ def conv_document(path):
 			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
 			block = lines[i + 1: end]
 		# bibliography
-		elif re.match('``bib$', text):
+		elif re.fullmatch('^``bib$', text):
 			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
 			block = generate_references(lines[i + 1: end], path[:-3] + '.bib')
 			uses_bib = True
+		# code (no highlighting)
+		elif re.fullmatch('``$', text):
+			print('found')
+			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+			block = conv_code(lines[i + 1:end])
+			end += 1
+		# code highlighting
+		elif re.fullmatch('``lang:\w+$', text):
+			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+			block = conv_code_high(lines[i:end])
+			end += 1
 		# list
 		elif re.match('(\d\.|-|\*)\s', text):
 			end = locate_end(lines[i + 1:], lambda x: x == '', i)
