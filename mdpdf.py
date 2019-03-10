@@ -2,6 +2,7 @@
 import sys
 import os.path
 import re
+import traceback
 from pprint import pprint
 import subprocess
 '''
@@ -174,46 +175,51 @@ def conv_document(path):
 	while i < len(lines):
 		text = lines[i]
 
-		end = i + 1
-		# heading
-		if re.match('#+\s', text):
-			level = len(re.match('#*', text).group())
-			subs = ''.join(['sub' for i in range(level - 1)])
-			block =  '\\' + subs + 'section{' + conv_span(text[level + 1:]) + '}'
-		# latex
-		elif re.match('``latex$', text):
-			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
-			block = lines[i + 1: end]
-		# bibliography
-		elif re.fullmatch('^``bib$', text):
-			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
-			block = generate_references(lines[i + 1: end], path[:-3] + '.bib')
-			uses_bib = True
-		# code (no highlighting)
-		elif re.fullmatch('``$', text):
-			print('found')
-			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
-			block = conv_code(lines[i + 1:end])
-			end += 1
-		# code highlighting
-		elif re.fullmatch('``lang:\w+$', text):
-			end = locate_end(lines[i + 1:], lambda x: x == '``', i)
-			block = conv_code_high(lines[i:end])
-			end += 1
-		# list
-		elif re.match('(\d\.|-|\*)\s', text):
-			end = locate_end(lines[i + 1:], lambda x: x == '', i)
-			block = conv_list(lines[i:end])
-		# block quotes
-		elif re.match('\>\040', text):
-			end = locate_end(lines[i + 1:], lambda x: x == '', i)
-			block = conv_quote(lines[i:end])
-		else:
-			block = conv_span(text)
+		try:
+			end = i + 1
+			# heading
+			if re.match('#+\s', text):
+				level = len(re.match('#*', text).group())
+				subs = ''.join(['sub' for i in range(level - 1)])
+				block =  '\\' + subs + 'section{' + conv_span(text[level + 1:]) + '}'
+			# latex
+			elif re.match('``latex$', text):
+				end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+				block = lines[i + 1: end]
+			# bibliography
+			elif re.fullmatch('^``bib$', text):
+				end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+				block = generate_references(lines[i + 1: end], path[:-3] + '.bib')
+				uses_bib = True
+			# code (no highlighting)
+			elif re.fullmatch('``$', text):
+				end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+				block = conv_code(lines[i + 1:end])
+				end += 1
+			# code highlighting
+			elif re.fullmatch('``lang:\w+$', text):
+				end = locate_end(lines[i + 1:], lambda x: x == '``', i)
+				block = conv_code_high(lines[i:end])
+				end += 1
+			# list
+			elif re.match('(\d\.|-|\*)\s', text):
+				end = locate_end(lines[i + 1:], lambda x: x == '', i)
+				block = conv_list(lines[i:end])
+			# block quotes
+			elif re.match('\>\040', text):
+				end = locate_end(lines[i + 1:], lambda x: x == '', i)
+				block = conv_quote(lines[i:end])
+			else:
+				block = conv_span(text)
 
-		if isinstance(block, str): tex.append(block)
-		if isinstance(block, list): tex += block
-		i = end
+			if isinstance(block, str): tex.append(block)
+			if isinstance(block, list): tex += block
+			i = end
+		except Exception as e:
+			print(traceback.format_exc())
+			print('\nError on line: ' + str(i) + ':')
+			print(text)
+			exit()
 	md_doc.close()
 	return tex, uses_bib, title
 
