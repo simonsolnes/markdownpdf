@@ -84,7 +84,7 @@ def conv_span(text):
     retval = tmp + plaintexts[-1]
 
     return retval
-    
+
 def conv_list(block):
     retval = []
 
@@ -95,7 +95,7 @@ def conv_list(block):
         return pre
     def list_type(x):
         return 'enumerate' if re.match('\d', prefix(x)) else 'itemize'
-        
+
     def conv_list_recurse(block, retval, idx, reclvl):
         reclvl += 1
         level = lambda x: len(re.match("\t*", x).group())
@@ -118,7 +118,7 @@ def conv_list(block):
         return idx
 
     retval.append('\\begin{' + list_type(block[0]) + '}')
-    # while(idx < len(block)): 
+    # while(idx < len(block)):
     conv_list_recurse(block, retval, 0, -1)
     retval.append('\\end{' + list_type(block[-1]) + '}')
 
@@ -129,7 +129,7 @@ def conv_quote(block):
     block.insert(0, '\\begin{quote}')
     block.append('\\end{quote}')
     return block
-    
+
 def conv_table(lines):
     pass
 def conv_image(lines):
@@ -148,7 +148,7 @@ def conv_code_high(lines):
     block += lines[1:]
     block.append("\\end{lstlisting}")
     return block
-    
+
 
 def conv_header(line):
     pass
@@ -224,7 +224,7 @@ def conv_document(path):
     return tex, uses_bib, title
 
 def generate_references(block, path):
-    
+
     hastab = lambda x: x[:4] == '    ' or x[0] == '\t'
     entries = []
     i = 0
@@ -249,7 +249,7 @@ def generate_references(block, path):
             for key, val in entry.items():
                 f.write('\t' + key + ' = {' + val + '},\n')
             f.write('}\n')
-        
+
     return '\\printbibliography'
 
 def gen_header(header_path, title):
@@ -260,9 +260,9 @@ def gen_header(header_path, title):
                 tmp = re.split('\$title\$', line)
                 tmp.insert(1, title)
                 header[idx] = ''.join(tmp)
-            
+
     return header
-    
+
 
 def clear_files(output_name = '*'):
     ext = '.aux .log .toc .out .bbl .bcf .blg .dvi .bib .run.xml -blx.bib .bib .latex'
@@ -298,7 +298,7 @@ def parse_args(args):
         md_path = args[2]
     else:
         print_usage()
-        
+
     if not os.path.isfile(md_path):
         print('Markdown document doesn\'t exist')
         exit(1)
@@ -314,7 +314,7 @@ def parse(md_path, header_path, output_name):
     header = gen_header(header_path, title)
     with open(output_name + '.latex', 'w') as tex_doc:
         for line in header:
-            tex_doc.write(line) 
+            tex_doc.write(line)
         if uses_bib:
             tex_doc.write('\\addbibresource{' + output_name + '.bib}\n')
         tex_doc.write('\\begin{document}\n')
