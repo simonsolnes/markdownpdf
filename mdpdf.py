@@ -186,6 +186,8 @@ def conv_document(path):
             elif re.match('``latex$', text):
                 end = locate_end(lines[i + 1:], lambda x: x == '``', i)
                 block = lines[i + 1: end]
+                end += 1
+                print(block)
             # bibliography
             elif re.fullmatch('^``bib$', text):
                 end = locate_end(lines[i + 1:], lambda x: x == '``', i)
